@@ -1,8 +1,14 @@
 package com.example.miwok;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,10 +20,21 @@ public class PhrasesActivity extends AppCompatActivity {
     //declare mediaplayer variable
     private MediaPlayer mMediaPlayer;
 
+    //declare audio manager object
+    private AudioManager mAudioManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        //setup audio manager object
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         //create an arrayList of phrases
         ArrayList<Word> words = new ArrayList<Word>();
@@ -36,12 +53,20 @@ public class PhrasesActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(itemsAdapter);
 
+
         //set listener to the list item
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mMediaPlayer = MediaPlayer.create(PhrasesActivity.this,  words.get(position).getAudioResourceId());
+                //clear media player object
+                releaseMediaPlayer();
+
+                //setup media player object with the current word's audio file
+                mMediaPlayer = MediaPlayer.create(PhrasesActivity.this, words.get(position).getAudioResourceId());
+
+                //start media player
                 mMediaPlayer.start();
+
                 //clear MediaPlayer object after use
                 mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
@@ -50,6 +75,8 @@ public class PhrasesActivity extends AppCompatActivity {
                     }
                 });
             }
+
+
         });
 
     }
