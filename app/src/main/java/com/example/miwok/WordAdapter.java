@@ -11,13 +11,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WordAdapter extends ArrayAdapter<Word> {
-    public WordAdapter(@NonNull Context context, ArrayList<Word> words) {
+    private int mCategoryColorResourceId;
+
+    public WordAdapter(@NonNull Context context, ArrayList<Word> words, int categoryColorResourceId) {
         super(context, 0, words);
+        mCategoryColorResourceId = categoryColorResourceId;
     }
 
     @NonNull
@@ -52,6 +56,10 @@ public class WordAdapter extends ArrayAdapter<Word> {
         } else{
             wordIcon.setVisibility(View.GONE);
         }
+
+        //set background color for list items based on activity's category
+        int color = ContextCompat.getColor(getContext(), mCategoryColorResourceId);
+        listItemView.setBackgroundColor(color);
 
         // Return the whole list item layout (containing 2 TextViews)
         // so that it can be shown in the ListView
